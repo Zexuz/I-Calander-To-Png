@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Security.Policy;
 
-namespace ICalanderToPang {
+namespace ICalendarToPag {
 
     public class ICalc {
 
@@ -39,27 +39,27 @@ namespace ICalanderToPang {
 
     public class Formater {
 
-        public static List<CalanderEvent> GetEvents(string iCalcFile) {
-            var list = new List<CalanderEvent>();
+        public static List<CalendarEvent> GetEvents(string iCalcFile) {
+            var list = new List<CalendarEvent>();
 
             var startIndex = 0;
             while ((startIndex = GetNextEventStartPos(iCalcFile, startIndex + 1)) > -1) {
                 var file = iCalcFile.Substring(startIndex);
 
-                var calanderEvent = new CalanderEvent();
+                var calendarEvent = new CalendarEvent();
 
-                calanderEvent.Subject = GetIcalcProp("SUMMARY:", file);
-                calanderEvent.Location = GetIcalcProp("LOCATION:", file);
-                calanderEvent.Start = GetIcalcProp("DTSTART;", file);
-                calanderEvent.End = GetIcalcProp("DTEND;", file);
+                calendarEvent.Subject = GetIcalcProp("SUMMARY:", file);
+                calendarEvent.Location = GetIcalcProp("LOCATION:", file);
+                calendarEvent.Start = GetIcalcProp("DTSTART;", file);
+                calendarEvent.End = GetIcalcProp("DTEND;", file);
 
-                list.Add(calanderEvent);
-                Console.WriteLine(calanderEvent.ToString());
+                list.Add(calendarEvent);
+                Console.WriteLine(calendarEvent.ToString());
             }
 
             /*
 
-            var calanderEvent = new CalanderEvent();
+            var calanderEvent = new CalendarEvent();
 
             calanderEvent.Subject = rows[++index];
             calanderEvent.Location = rows[++index];
@@ -87,7 +87,7 @@ namespace ICalanderToPang {
     }
 
 
-    public class CalanderEvent {
+    public class CalendarEvent {
 
         public string Start;
         public string End;
