@@ -7,8 +7,8 @@
     <ProjectGuid>779B3362-60C3-456A-97DD-C041D74300B1</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ICalanderToPang</RootNamespace>
-    <AssemblyName>ICalanderToPang</AssemblyName>
+    <RootNamespace>ICalendarToPng</RootNamespace>
+    <AssemblyName>ICalendarToPng</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
