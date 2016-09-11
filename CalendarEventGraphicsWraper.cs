@@ -10,7 +10,7 @@ namespace ICalendarToPng {
         private readonly int _height;
         private readonly int _width;
         private int _scale;
-        private string _outPutDir = @"../../res/image.png";
+        private const string OutPutDir = @"../../res/image.png";
 
         private Bitmap _image;
 
@@ -27,6 +27,7 @@ namespace ICalendarToPng {
         }
 
         public void DrawCalanderEvent(CalendarEvent calendarEvent) {
+            Console.WriteLine(calendarEvent.ToString());
             var rect = new Rectangle(10, GetYPosFromCalendarEvent(calendarEvent), (_width / 7) - 10,
                 GetHeightBasedOfCalendarEvent(calendarEvent));
 
@@ -58,7 +59,7 @@ namespace ICalendarToPng {
 
 
         public void SaveImage() {
-            _image.Save(_outPutDir, ImageFormat.Png);
+            _image.Save(OutPutDir, ImageFormat.Png);
             _image.Dispose();
         }
 

@@ -47,6 +47,8 @@
     <Compile Include="ICalc.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Week.cs" />
+    <Compile Include="WeekHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="res" />
