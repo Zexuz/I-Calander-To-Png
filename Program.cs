@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ICalendarToPag {
+namespace ICalendarToPng {
 
     internal class Program {
 
@@ -10,12 +10,18 @@ namespace ICalendarToPag {
         public static void Main(string[] args) {
             var icalc = new ICalc(CalendarUrl);
 
-            //    icalc.DownloadFile();
-            var file = icalc.ReadFile();
+            var calanderGraphics = new CalendarEventGraphicsWraper(300,300,1);
 
+
+
+             // icalc.DownloadFile();
+            var file = icalc.ReadFile();
             Formater.GetEvents(file);
 
-            Console.ReadKey();
+            calanderGraphics.DrawCalanderEvent(Formater.GetEvents(file)[0]);
+            calanderGraphics.DrawCalanderEvent(Formater.GetEvents(file)[4]);
+            calanderGraphics.SaveImage();
+
 
         }
 
