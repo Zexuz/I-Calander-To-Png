@@ -1,16 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICalendarToPng {
 
     public class Formater {
 
-        public static List<CalendarEvent> GetEvents(string iCalcFile) {
-            var list = new List<CalendarEvent>();
+        public List<CalendarEvent> List;
+        public string ICalcFile;
 
+        public Formater(string iCalcFile) {
+            ICalcFile = iCalcFile;
+            List = new List<CalendarEvent>();
+
+
+            List = MakeEvents();
+        }
+
+        public List<CalendarEvent> MakeEvents() {
             var startIndex = 0;
-            while ((startIndex = GetNextEventStartPos(iCalcFile, startIndex + 1)) > -1) {
-                var file = iCalcFile.Substring(startIndex);
+
+
+            while ((startIndex = GetNextEventStartPos(ICalcFile, startIndex + 1)) > -1) {
+                var file = ICalcFile.Substring(startIndex);
 
                 var calendarEvent = new CalendarEvent();
 
@@ -19,10 +31,19 @@ namespace ICalendarToPng {
                 calendarEvent.Start = GetDateTimeFromString(GetIcalcProp("DTSTART;", file));
                 calendarEvent.End = GetDateTimeFromString(GetIcalcProp("DTEND;", file));
 
-                list.Add(calendarEvent);
-                Console.WriteLine(calendarEvent.ToString());
+                List.Add(calendarEvent);
             }
-            return list;
+
+            SortList();
+            return List;
+        }
+
+        public List<CalendarEvent> GetCalendarEventsBetweenDates(DateTime date1, DateTime date2) {
+            return List.Where(calendarEvent => calendarEvent.Start >= date1 && calendarEvent.End <= date2).ToList();
+        }
+
+        private void SortList() {
+            List = List.OrderBy(o => o.Start).ToList();
         }
 
         public static string GetIcalcProp(string propName, string file) {
