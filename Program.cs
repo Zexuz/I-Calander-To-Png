@@ -20,7 +20,7 @@ namespace ICalendarToPng {
             formater.MakeEvents();
 
 
-            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 08, 22), new DateTime(2016, 08, 29));
+            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09,26 ), new DateTime(2016, 10, 01));
             //todo convert list to weeks
 
             var startWeek = new Week(list[0].Start);
@@ -28,8 +28,6 @@ namespace ICalendarToPng {
             Console.WriteLine(list[0].Start);
 
             var days = new List<Day>();
-
-
 
 
             var currentcEventIndex = 0;
@@ -52,6 +50,7 @@ namespace ICalendarToPng {
                     if (date.Day != list[i].Start.Day) {
                         break;
                     }
+
                     cEvents.Add(list[i]);
                 }
 
@@ -92,18 +91,24 @@ namespace ICalendarToPng {
                 #endregion
             }
 
-
             //When we print out our calendar, just take 7 days at a time unitll done and make a image
 
-            Environment.Exit(Environment.ExitCode);
             //god code but we can't doo this untill all days are in weeks and all calendar events is inside days
             var indexInWeek = (int) list[0].Start.DayOfWeek - 1;
             Console.WriteLine(indexInWeek);
 
             var calanderGraphics = new CalendarEventGraphicsWraper(display);
 
-            foreach (var cEvent in startWeek.Days[indexInWeek].CalendarEvents) {
-                calanderGraphics.DrawCalanderEvent(cEvent);
+            foreach (var day in days) {
+
+                if (day.CalendarEvents == null) {
+                    //draw "nothing here" on img
+                    continue;
+                }
+
+                foreach (var cEvent in day.CalendarEvents) {
+                    calanderGraphics.DrawCalanderEvent(cEvent, (int) day.CalendarEvents[0].Start.DayOfWeek);
+                }
             }
 
             display.SaveImage();
