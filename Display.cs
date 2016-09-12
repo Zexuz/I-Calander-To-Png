@@ -22,6 +22,10 @@ namespace ICalendarToPng {
             Scale = scale;
 
             Image = new Bitmap(Width, Height);
+
+            using (var g = Graphics.FromImage(Image)) {
+                g.Clear(Color.White);
+            }
         }
 
 

@@ -1,84 +1,80 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+﻿using System.Drawing;
 
 namespace ICalendarToPng {
 
     public class CalendarEventGraphicsWraper {
 
-        private Display _display;
+        private readonly Display _display;
+        private readonly CalendarEvent _calendarEvent;
+
+        private readonly int _dayOfWeek;
 
         public Bitmap Image;
 
-        public CalendarEventGraphicsWraper(Display display) {
+        public CalendarEventGraphicsWraper(Display display, CalendarEvent calendarEvent, int dayOfWeek) {
             //IDE DON*T LET ME HAVE A ROW HERE...
 
-
             _display = display;
-            using (var g = Graphics.FromImage(_display.Image)) {
-                g.Clear(Color.White);
-            }
+            _calendarEvent = calendarEvent;
+            _dayOfWeek = dayOfWeek;
+
         }
 
-        public void DrawDay(Day day) {}
-
-
-        public void DrawCalanderEvent(CalendarEvent calendarEvent, int dayOfWeek) {
-            Console.WriteLine(calendarEvent.ToString());
-
+        public void DrawCalanderEvent() {
             var rect = new Rectangle(
-                _display.Width / 7 * dayOfWeek,
-                _display.GetYPosFromCalendarEvent(calendarEvent),
-                _display.Width / 7 - 10,
-                _display.GetHeightBasedOfCalendarEvent(calendarEvent)
+                GetX(),
+                GetY(),
+                GetWidth(),
+                GetHeight()
             );
-
-            var font = new Font("Arial", 8);
-            var brush = new SolidBrush(Color.Black);
-
 
             using (var g = Graphics.FromImage(_display.Image)) {
                 g.DrawRectangle(new Pen(Color.Black), rect);
-                g.DrawString(
-                    calendarEvent.Start.ToShortTimeString(),
-                    font, brush,
-                    _display.Width / 7 * dayOfWeek,
-                    _display.GetYPosFromCalendarEvent(calendarEvent)
-                );
-                g.DrawString(
-                    calendarEvent.End.ToShortTimeString(),
-                    font, brush,
-                    _display.Width / 7 * dayOfWeek,
-                    _display.GetYPosFromCalendarEvent(calendarEvent)
-                    +_display.GetHeightBasedOfCalendarEvent(calendarEvent) -15
+                DrawStartTime();
+                DrawEndTime();
+            }
+        }
+
+        private void DrawEndTime() {
+            var x = (int) (GetX() + GetWidth() - (0.0375*_display.Height));
+            var y = GetY() + GetHeight() - 13;
+
+            DrawString(_calendarEvent.End.ToShortTimeString(), x, y);
+        }
+
+
+        private void DrawStartTime() {
+            var x = GetX();
+            var y = GetY();
+
+            DrawString(_calendarEvent.Start.ToShortTimeString(), x, y);
+        }
+
+        private void DrawString(string str, int x, int y, int font = 8) {
+            using (var g = Graphics.FromImage(_display.Image)) {
+                //Empty comment...
+
+                g.DrawString(str, new Font("Arial", font), new SolidBrush(Color.Black), x, y
                 );
             }
+        }
+
+        private int GetX() {
+            return _display.Width / 7 * _dayOfWeek;
+        }
+
+        private int GetY() {
+            return _display.GetYPosFromCalendarEvent(_calendarEvent);
+        }
+
+        private int GetHeight() {
+            return _display.GetHeightBasedOfCalendarEvent(_calendarEvent);
+        }
+
+        private int GetWidth() {
+            return _display.Width / 7 - 10;
         }
 
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

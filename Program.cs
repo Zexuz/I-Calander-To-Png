@@ -11,16 +11,16 @@ namespace ICalendarToPng {
 
         public static void Main(string[] args) {
             var icalc = new ICalc(CalendarUrl);
-            var display = new Display(300, 300, 1);
+            var display = new Display(800, 800, 1);
 
-            // icalc.DownloadFile();
+            icalc.DownloadFile();
             var file = icalc.ReadFile();
 
             var formater = new Formater(file);
             formater.MakeEvents();
 
 
-            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09,26 ), new DateTime(2016, 10, 01));
+            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 09, 24));
             //todo convert list to weeks
 
             var startWeek = new Week(list[0].Start);
@@ -97,17 +97,20 @@ namespace ICalendarToPng {
             var indexInWeek = (int) list[0].Start.DayOfWeek - 1;
             Console.WriteLine(indexInWeek);
 
-            var calanderGraphics = new CalendarEventGraphicsWraper(display);
 
             foreach (var day in days) {
-
                 if (day.CalendarEvents == null) {
                     //draw "nothing here" on img
                     continue;
                 }
 
+
                 foreach (var cEvent in day.CalendarEvents) {
-                    calanderGraphics.DrawCalanderEvent(cEvent, (int) day.CalendarEvents[0].Start.DayOfWeek);
+                    Console.WriteLine("Drawing event");
+                    var cEventGraphics = new CalendarEventGraphicsWraper(display, cEvent,
+                        (int) day.CalendarEvents[0].Start.DayOfWeek);
+
+                    cEventGraphics.DrawCalanderEvent();
                 }
             }
 
