@@ -38,8 +38,12 @@ namespace ICalendarToPng {
             return List;
         }
 
+        public List<CalendarEvent> GetCalendarEventsBetweenDates(DateTime date1, DateTime date2) {
+            return List.Where(calendarEvent => calendarEvent.Start >= date1 && calendarEvent.End <= date2).ToList();
+        }
+
         private void SortList() {
-            List = List.OrderBy(o=>o.Start).ToList();
+            List = List.OrderBy(o => o.Start).ToList();
         }
 
         public static string GetIcalcProp(string propName, string file) {

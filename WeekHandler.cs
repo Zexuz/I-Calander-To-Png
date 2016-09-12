@@ -12,8 +12,6 @@ namespace ICalendarToPng {
         public List<Week> GetWeeksFromCalendar(List<CalendarEvent> allCalendarEvent) {
 
             foreach (var calendarEvent in allCalendarEvent) {
-                new Week()
-
 
             }
 

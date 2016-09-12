@@ -1,31 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace ICalendarToPng {
 
     public class Week {
 
         public List<Day> Days;
+
         public int WeekNr;
         public DateTime FirstDayOfWeek;
 
-        public Week() {
-            WeekNr = GetCurrentWeekNr();
-            FirstDayOfWeek = DateTime.Today.Subtract(TimeSpan.FromDays(DaysIntoTheWeek()));
+        public Week(DateTime date) {
+            WeekNr = GetCurrentWeekNr(date);
+            FirstDayOfWeek = date.Subtract(TimeSpan.FromDays(DaysIntoTheWeek(date)));
+
+            Days = new List<Day>(7);
         }
 
-        private static int GetCurrentWeekNr() {
+        private static int GetCurrentWeekNr(DateTime date) {
             var dfi = DateTimeFormatInfo.CurrentInfo;
             var cal = dfi.Calendar;
 
-            return cal.GetWeekOfYear(DateTime.Now, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+            return cal.GetWeekOfYear(date, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
         }
 
-        private static int DaysIntoTheWeek() {
-            var date = DateTime.Today;
-
+        public static int DaysIntoTheWeek(DateTime date) {
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (date.DayOfWeek) {
                 case DayOfWeek.Monday:

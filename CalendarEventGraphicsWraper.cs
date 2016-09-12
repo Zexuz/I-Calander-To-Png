@@ -7,60 +7,33 @@ namespace ICalendarToPng {
 
     public class CalendarEventGraphicsWraper {
 
-        private readonly int _height;
-        private readonly int _width;
-        private int _scale;
-        private const string OutPutDir = @"../../res/image.png";
+        private Display _display;
 
-        private Bitmap _image;
+        public Bitmap Image;
+        public CalendarEventGraphicsWraper(Display display) {
+            //IDE DON*T LET ME HAVE A ROW HERE...
 
-        public CalendarEventGraphicsWraper(int height, int width, int scale) {
-            _height = height;
-            _width = width;
-            _scale = scale;
 
-            _image = new Bitmap(_width, _height);
-
-            using (var g = Graphics.FromImage(_image)) {
+            _display = display;
+            using (var g = Graphics.FromImage(_display.Image)) {
                 g.Clear(Color.White);
             }
         }
 
         public void DrawCalanderEvent(CalendarEvent calendarEvent) {
             Console.WriteLine(calendarEvent.ToString());
-            var rect = new Rectangle(10, GetYPosFromCalendarEvent(calendarEvent), (_width / 7) - 10,
-                GetHeightBasedOfCalendarEvent(calendarEvent));
 
-            using (var g = Graphics.FromImage(_image)) {
+            var rect = new Rectangle(
+                10,
+                _display.GetYPosFromCalendarEvent(calendarEvent),
+                _display.Width / 7 - 10,
+                _display.GetHeightBasedOfCalendarEvent(calendarEvent)
+            );
+
+
+            using (var g = Graphics.FromImage(_display.Image)) {
                 g.DrawRectangle(new Pen(Color.Black), rect);
             }
-        }
-
-        public int GetHeightBasedOfCalendarEvent(CalendarEvent calendarEvent) {
-            const int minutesInOneDay = 60 * 24;
-
-            var duration = calendarEvent.End - calendarEvent.Start;
-            var heightInPercent = duration.TotalMinutes / minutesInOneDay;
-
-            return Convert.ToInt32(_height * heightInPercent);
-        }
-
-
-        public int GetYPosFromCalendarEvent(CalendarEvent calendarEvent) {
-            const double minInOneDay = 60 * 24;
-
-            double minutes = calendarEvent.Start.Hour * 60;
-            minutes += calendarEvent.Start.Minute;
-
-            var yPosInPercent = minutes / minInOneDay;
-
-            return Convert.ToInt32(yPosInPercent * _height);
-        }
-
-
-        public void SaveImage() {
-            _image.Save(OutPutDir, ImageFormat.Png);
-            _image.Dispose();
         }
 
     }
