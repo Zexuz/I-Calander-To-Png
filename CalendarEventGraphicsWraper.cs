@@ -20,6 +20,7 @@ namespace ICalendarToPng {
 
         }
 
+
         public void DrawCalanderEvent() {
             var rect = new Rectangle(
                 GetX(),
@@ -42,7 +43,6 @@ namespace ICalendarToPng {
             DrawString(_calendarEvent.End.ToShortTimeString(), x, y);
         }
 
-
         private void DrawStartTime() {
             var x = GetX();
             var y = GetY();
@@ -58,6 +58,7 @@ namespace ICalendarToPng {
                 );
             }
         }
+
 
         private int GetX() {
             return _display.Width / 7 * _dayOfWeek;

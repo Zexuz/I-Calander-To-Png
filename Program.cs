@@ -13,7 +13,7 @@ namespace ICalendarToPng {
             var icalc = new ICalc(CalendarUrl);
             var display = new Display(800, 800, 1);
 
-            icalc.DownloadFile();
+            //icalc.DownloadFile();
             var file = icalc.ReadFile();
 
             var formater = new Formater(file);
@@ -23,13 +23,10 @@ namespace ICalendarToPng {
             var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 09, 24));
             //todo convert list to weeks
 
-            var startWeek = new Week(list[0].Start);
-
-            Console.WriteLine(list[0].Start);
 
             var days = new List<Day>();
 
-
+            //todo find a place for this code
             var currentcEventIndex = 0;
             for (var date = list[0].Start; date <= list[list.Count - 1].End; date = date.AddDays(1)) {
                 //get the fisrt day in our calendar
@@ -57,62 +54,13 @@ namespace ICalendarToPng {
                 currentcEventIndex += cEvents.Count;
                 var day = new Day(cEvents);
                 days.Add(day);
-
-                #region comment
-
-                /*
-
-
-                    int i;
-                                 while ((i = lastIndex) < list.Count) {
-                                     var index = i;
-
-                                     Console.WriteLine("----------------starting while loop");
-                                     while (true) {
-                                         //list[i].Start.Day == list[index].Start.Day && index + 1 < list.Count
-                                         if (index == list.Count) break;
-                                         if (list[i].Start.Day != list[index].Start.Day) break;
-
-                                         Console.WriteLine("list[i] day (static) {0}", list[i].Start.Day);
-                                         Console.WriteLine("list[index] day {0}", list[index].Start.Day);
-                                         cEvents.Add(list[index]);
-                                         index++;
-                                     }
-
-                                     lastIndex = index;
-
-                                     Console.WriteLine("Ending while loop-------------------");
-                                 }
-
-
-
-                 */
-
-                #endregion
             }
 
             //When we print out our calendar, just take 7 days at a time unitll done and make a image
 
             //god code but we can't doo this untill all days are in weeks and all calendar events is inside days
-            var indexInWeek = (int) list[0].Start.DayOfWeek - 1;
-            Console.WriteLine(indexInWeek);
 
-
-            foreach (var day in days) {
-                if (day.CalendarEvents == null) {
-                    //draw "nothing here" on img
-                    continue;
-                }
-
-
-                foreach (var cEvent in day.CalendarEvents) {
-                    Console.WriteLine("Drawing event");
-                    var cEventGraphics = new CalendarEventGraphicsWraper(display, cEvent,
-                        (int) day.CalendarEvents[0].Start.DayOfWeek);
-
-                    cEventGraphics.DrawCalanderEvent();
-                }
-            }
+            display.PaintDays(days);
 
             display.SaveImage();
         }

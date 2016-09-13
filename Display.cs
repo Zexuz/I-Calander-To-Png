@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing.Text;
 
 namespace ICalendarToPng {
 
@@ -23,8 +22,39 @@ namespace ICalendarToPng {
 
             Image = new Bitmap(Width, Height);
 
+            ClearAndPaintHourLines();
+            PaintDayLines();
+        }
+
+        public void PaintDayLines() {}
+
+        public void ClearAndPaintHourLines() {
             using (var g = Graphics.FromImage(Image)) {
                 g.Clear(Color.White);
+
+                var semiTransPen = new Pen(Color.FromArgb(64, 0, 0, 255), 1);
+
+                for (int i = 0; i < 24; i++) {
+                    var yCord = GetResponsiveValue(i, 24, Height);
+                    g.DrawLine(semiTransPen, 0, yCord, Width, yCord);
+                }
+            }
+        }
+
+        public void PaintDays(List<Day> days) {
+            foreach (var day in days) {
+                if (day.CalendarEvents == null) {
+                    //TODO draw "nothing here" on img
+                    continue;
+                }
+
+
+                foreach (var cEvent in day.CalendarEvents) {
+                    var dayOfWeekk = (int) day.CalendarEvents[0].Start.DayOfWeek;
+                    var cEventGraphics = new CalendarEventGraphicsWraper(this, cEvent, dayOfWeekk);
+
+                    cEventGraphics.DrawCalanderEvent();
+                }
             }
         }
 
@@ -36,7 +66,6 @@ namespace ICalendarToPng {
 
             return GetResponsiveValue(duration, minutesInOneDay, Height);
         }
-
 
         public int GetYPosFromCalendarEvent(CalendarEvent calendarEvent) {
             const double minInOneDay = 60 * 24;
@@ -52,7 +81,6 @@ namespace ICalendarToPng {
             var yPosInPercent = valuePart / valueWhole;
             return Convert.ToInt32(yPosInPercent * value);
         }
-
 
         public void SaveImage() {
             Console.WriteLine(Image.Height);
