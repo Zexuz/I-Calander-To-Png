@@ -30,6 +30,7 @@ namespace ICalendarToPng {
                 calendarEvent.Location = GetIcalcProp("LOCATION:", file);
                 calendarEvent.Start = GetDateTimeFromString(GetIcalcProp("DTSTART;", file));
                 calendarEvent.End = GetDateTimeFromString(GetIcalcProp("DTEND;", file));
+                calendarEvent.Repeat = new Repeat(file);
 
                 List.Add(calendarEvent);
             }
@@ -39,10 +40,47 @@ namespace ICalendarToPng {
         }
 
         public List<CalendarEvent> GetCalendarEventsBetweenDates(DateTime date1, DateTime date2) {
-            return List.Where(calendarEvent => calendarEvent.Start >= date1 && calendarEvent.End <= date2).ToList();
+            var ourList =
+                List.Where(calendarEvent => calendarEvent.Start >= date1 && calendarEvent.End <= date2).ToList();
+
+            var newList = ourList;
+            for (var i = 0; i < ourList.Count; i++) {
+                var a = ourList[i];
+
+
+                if (Equals(a.Repeat.Freq, Repeat.FreqEnum.Unknow)) continue;
+                if (a.Repeat.Untill < date1) continue; // if the date has been, we don't repeat it.
+
+
+                if (Equals(a.Repeat.Freq, Repeat.FreqEnum.Daily)) {
+                    a.Start.Date.AddDays(1);
+                    a.End.Date.AddDays(1);
+                }
+
+                if (Equals(a.Repeat.Freq, Repeat.FreqEnum.Weekly)) {
+                    a.Start.Date.AddDays(7);
+                    a.End.Date.AddDays(7);
+                }
+
+
+                if (Equals(a.Repeat.Freq, Repeat.FreqEnum.Monthly)) {
+                    a.Start.Date.AddMonths(1);
+                    a.End.Date.AddMonths(1);
+                }
+
+                if (Equals(a.Repeat.Freq, Repeat.FreqEnum.Yearly)) {
+                    a.Start.Date.AddYears(1);
+                    a.End.Date.AddYears(1);
+                }
+
+
+                newList.Add(a);
+            }
+
+            return ourList;
         }
 
-        private void SortList() {
+        public void SortList() {
             List = List.OrderBy(o => o.Start).ToList();
         }
 
