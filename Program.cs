@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace ICalendarToPng {
@@ -11,7 +12,6 @@ namespace ICalendarToPng {
 
         public static void Main(string[] args) {
             var icalc = new ICalc(CalendarUrl);
-            var display = new Display(800, 800, 1);
 
             //icalc.DownloadFile();
             var file = icalc.ReadFile();
@@ -20,13 +20,16 @@ namespace ICalendarToPng {
             formater.MakeEvents();
 
 
-            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 09, 24));
+            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 09, 30));
             //todo convert list to weeks
 
 
             var days = new List<Day>();
 
             //todo find a place for this code
+
+            #region GetAndAddDaysToList
+
             var currentcEventIndex = 0;
             for (var date = list[0].Start; date <= list[list.Count - 1].End; date = date.AddDays(1)) {
                 //get the fisrt day in our calendar
@@ -56,13 +59,42 @@ namespace ICalendarToPng {
                 days.Add(day);
             }
 
+            #endregion
+
             //When we print out our calendar, just take 7 days at a time unitll done and make a image
 
             //god code but we can't doo this untill all days are in weeks and all calendar events is inside days
 
-            display.PaintDays(days);
+            Console.WriteLine($"days {days.Count}");
 
-            display.SaveImage();
+            var weeks = new List<Week>();
+
+            Week week = null;
+            for (var i = 0; i < days.Count; i++) {
+                var day = days[i];
+
+                if(day == null || day.CalendarEvents == null) continue;
+
+                if (week == null) week = new Week(days[i].CalendarEvents[0].Start);
+
+                if (i % 7 == 0 && i > 0) {
+                    weeks.Add(week);
+                    week = new Week(days[i].CalendarEvents[0].Start);
+                }
+
+                if (!week.WeekDayIsInsideWeek(day.CalendarEvents[0].Start)) continue;
+
+                var index = (int) day.CalendarEvents[0].Start.DayOfWeek - 1;
+                week.Days.RemoveAt(index);
+                week.Days.Insert(index, day);
+            }
+
+            weeks.Add(week);
+
+            foreach (var w in weeks) {
+                new Image(800, 800, 50).WriteWeek(w);
+            }
+
         }
 
     }

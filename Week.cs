@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace ICalendarToPng {
 
     public class Week {
 
-        public List<Day> Days;
+        public List<Day> Days = new List<Day>(new Day[7]);
 
         public int WeekNr;
         public DateTime FirstDayOfWeek;
 
+        public Week() {
+        }
+
         public Week(DateTime date) {
+            SetWeek(date);
+        }
+
+        public void SetWeek(DateTime date) {
             WeekNr = GetCurrentWeekNr(date);
             FirstDayOfWeek = date.Subtract(TimeSpan.FromDays(DaysIntoTheWeek(date)));
+            WeekNr = GetIso8601WeekOfYear(date);
 
-            Days = new List<Day>(7);
         }
 
         private static int GetCurrentWeekNr(DateTime date) {
@@ -50,6 +56,22 @@ namespace ICalendarToPng {
             TimeSpan res = FirstDayOfWeek.Date - date.Date;
 
             return res.Days > -7 && res.Days <= 0;
+        }
+
+        public static int GetIso8601WeekOfYear(DateTime time) {
+            // Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll
+            // be the same week# as whatever Thursday, Friday or Saturday are,
+            // and we always get those right
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday) {
+                time = time.AddDays(3);
+            }
+
+            // Return the week of our adjusted day
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                time,
+                CalendarWeekRule.FirstFourDayWeek,
+                DayOfWeek.Monday);
         }
 
     }

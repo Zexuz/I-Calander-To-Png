@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="CalendarEventGraphicsWraper.cs" />
     <Compile Include="CalendarEvent.cs" />
-    <Compile Include="Display.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Formater.cs" />
     <Compile Include="ICalc.cs" />
     <Compile Include="Program.cs" />

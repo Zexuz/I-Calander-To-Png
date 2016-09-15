@@ -4,20 +4,19 @@ namespace ICalendarToPng {
 
     public class CalendarEventGraphicsWraper {
 
-        private readonly Display _display;
+        private readonly Image _image;
         private readonly CalendarEvent _calendarEvent;
 
         private readonly int _dayOfWeek;
 
-        public Bitmap Image;
+        public Bitmap BitmapImage;
 
-        public CalendarEventGraphicsWraper(Display display, CalendarEvent calendarEvent, int dayOfWeek) {
+        public CalendarEventGraphicsWraper(Image image, CalendarEvent calendarEvent, int dayOfWeek) {
             //IDE DON*T LET ME HAVE A ROW HERE...
 
-            _display = display;
+            _image = image;
             _calendarEvent = calendarEvent;
             _dayOfWeek = dayOfWeek;
-
         }
 
 
@@ -29,7 +28,7 @@ namespace ICalendarToPng {
                 GetHeight()
             );
 
-            using (var g = Graphics.FromImage(_display.Image)) {
+            using (var g = Graphics.FromImage(_image.BitmapImage)) {
                 g.DrawRectangle(new Pen(Color.Black), rect);
                 DrawStartTime();
                 DrawEndTime();
@@ -37,7 +36,7 @@ namespace ICalendarToPng {
         }
 
         private void DrawEndTime() {
-            var x = (int) (GetX() + GetWidth() - (0.0375*_display.Height));
+            var x = (int) (GetX() + GetWidth() - (0.0375 * _image.HeightMinusMargin));
             var y = GetY() + GetHeight() - 13;
 
             DrawString(_calendarEvent.End.ToShortTimeString(), x, y);
@@ -51,29 +50,28 @@ namespace ICalendarToPng {
         }
 
         private void DrawString(string str, int x, int y, int font = 8) {
-            using (var g = Graphics.FromImage(_display.Image)) {
+            using (var g = Graphics.FromImage(_image.BitmapImage)) {
                 //Empty comment...
 
-                g.DrawString(str, new Font("Arial", font), new SolidBrush(Color.Black), x, y
-                );
+                g.DrawString(str, new Font("Arial", font), new SolidBrush(Color.Black), x, y);
             }
         }
 
 
         private int GetX() {
-            return _display.Width / 7 * _dayOfWeek;
+            return _image.Width / 7 * _dayOfWeek;
         }
 
         private int GetY() {
-            return _display.GetYPosFromCalendarEvent(_calendarEvent);
+            return _image.GetYPosFromCalendarEvent(_calendarEvent) + _image.MarginTop;
         }
 
         private int GetHeight() {
-            return _display.GetHeightBasedOfCalendarEvent(_calendarEvent);
+            return _image.GetHeightBasedOfCalendarEvent(_calendarEvent);
         }
 
         private int GetWidth() {
-            return _display.Width / 7 - 10;
+            return _image.Width / 7 - 10;
         }
 
     }
