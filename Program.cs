@@ -20,7 +20,7 @@ namespace ICalendarToPng {
             formater.MakeEvents();
 
 
-            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 09, 30));
+            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 10, 1));
             //todo convert list to weeks
 
 
@@ -73,16 +73,22 @@ namespace ICalendarToPng {
             for (var i = 0; i < days.Count; i++) {
                 var day = days[i];
 
-                if(day == null || day.CalendarEvents == null) continue;
+                if (day == null || day.CalendarEvents == null) continue;
 
                 if (week == null) week = new Week(days[i].CalendarEvents[0].Start);
 
                 if (i % 7 == 0 && i > 0) {
                     weeks.Add(week);
-                    week = new Week(days[i].CalendarEvents[0].Start);
+                    week = new Week(); //days[i].CalendarEvents[0].Start
+                    //todo this will give us a empty week whith no start day eg 1970-01-01 00:00:00 if the week is empty
                 }
 
-                if (!week.WeekDayIsInsideWeek(day.CalendarEvents[0].Start)) continue;
+                Console.WriteLine($"index is {i}");
+
+                if (!week.WeekDayIsInsideWeek(day.CalendarEvents[0].Start)) {
+                    weeks.Add(week);
+                    week = new Week(day.CalendarEvents[0].Start);
+                }
 
                 var index = (int) day.CalendarEvents[0].Start.DayOfWeek - 1;
                 week.Days.RemoveAt(index);
@@ -91,10 +97,12 @@ namespace ICalendarToPng {
 
             weeks.Add(week);
 
+            Console.WriteLine($"We have {weeks.Count} st weeks");
+            Console.WriteLine(list.Count);
+
             foreach (var w in weeks) {
                 new Image(800, 800, 50).WriteWeek(w);
             }
-
         }
 
     }

@@ -10,6 +10,8 @@ namespace ICalendarToPng {
         public string Location;
         public string Subject;
 
+        public string Uid;
+
 
         public override string ToString() {
             return "Start: " + Start + ", " + "End: " + End + ", " + "Location: " + Location + ", " + "Subject: " +
