@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
+
+using ICalendarToPng.files;
 
 
 namespace ICalendarToPng {
@@ -11,26 +14,27 @@ namespace ICalendarToPng {
 
         public static void Main(string[] args) {
             var icalc = new ICalc(CalendarUrl);
-            var display = new Display(300, 300, 1);
 
-            // icalc.DownloadFile();
+            icalc.DownloadFile();
             var file = icalc.ReadFile();
 
             var formater = new Formater(file);
-            formater.MakeEvents();
 
 
-            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 08, 22), new DateTime(2016, 08, 29));
-            //todo convert list to weeks
+            //make events from IcalsEvents;
+            formater.MakeEventsFromIcalcEvents(new DateTime(2016, 09, 19), new DateTime(2016, 10, 1));
 
-            var startWeek = new Week(list[0].Start);
+            formater.SortList();
 
-            Console.WriteLine(list[0].Start);
+            var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 10, 1));
+
+            Console.WriteLine(list.Count);
 
             var days = new List<Day>();
 
+            //todo find a place for this code
 
-
+            #region GetAndAddDaysToList
 
             var currentcEventIndex = 0;
             for (var date = list[0].Start; date <= list[list.Count - 1].End; date = date.AddDays(1)) {
@@ -38,7 +42,7 @@ namespace ICalendarToPng {
                 //get the last day in our calendar
                 //get a calendar and run trhue every day
 
-                var cEvents = new List<CalendarEvent>();
+                var events = new List<Event>();
 
                 //if there are no "events" in that day, just add a empty day
                 if (date.Day != list[currentcEventIndex].Start.Day) {
@@ -52,61 +56,65 @@ namespace ICalendarToPng {
                     if (date.Day != list[i].Start.Day) {
                         break;
                     }
-                    cEvents.Add(list[i]);
+
+                    events.Add(list[i]);
                 }
 
-                currentcEventIndex += cEvents.Count;
-                var day = new Day(cEvents);
+                currentcEventIndex += events.Count;
+                var day = new Day(events);
                 days.Add(day);
-
-                #region comment
-
-                /*
-
-
-                    int i;
-                                 while ((i = lastIndex) < list.Count) {
-                                     var index = i;
-
-                                     Console.WriteLine("----------------starting while loop");
-                                     while (true) {
-                                         //list[i].Start.Day == list[index].Start.Day && index + 1 < list.Count
-                                         if (index == list.Count) break;
-                                         if (list[i].Start.Day != list[index].Start.Day) break;
-
-                                         Console.WriteLine("list[i] day (static) {0}", list[i].Start.Day);
-                                         Console.WriteLine("list[index] day {0}", list[index].Start.Day);
-                                         cEvents.Add(list[index]);
-                                         index++;
-                                     }
-
-                                     lastIndex = index;
-
-                                     Console.WriteLine("Ending while loop-------------------");
-                                 }
-
-
-
-                 */
-
-                #endregion
             }
 
+            #endregion
 
             //When we print out our calendar, just take 7 days at a time unitll done and make a image
 
-            Environment.Exit(Environment.ExitCode);
             //god code but we can't doo this untill all days are in weeks and all calendar events is inside days
-            var indexInWeek = (int) list[0].Start.DayOfWeek - 1;
-            Console.WriteLine(indexInWeek);
 
-            var calanderGraphics = new CalendarEventGraphicsWraper(display);
+            Console.WriteLine($"days {days.Count}");
 
-            foreach (var cEvent in startWeek.Days[indexInWeek].CalendarEvents) {
-                calanderGraphics.DrawCalanderEvent(cEvent);
+            var weeks = new List<Week>();
+
+            Week week = null;
+            for (var i = 0; i < days.Count; i++) {
+                var day = days[i];
+
+                if (day == null || day.Events == null) continue;
+
+                if (week == null) week = new Week(days[i].Events[0].Start);
+
+                if (i % 7 == 0 && i > 0) {
+                    weeks.Add(week);
+                    week = new Week(); //days[i].CalendarEvents[0].Start
+                    //todo this will give us a empty week whith no start day eg 1970-01-01 00:00:00 if the week is empty
+                }
+
+                Console.WriteLine($"index is {i}");
+
+                if (!week.WeekDayIsInsideWeek(day.Events[0].Start)) {
+                    weeks.Add(week);
+                    week = new Week(day.Events[0].Start);
+                }
+
+                var index = (int) day.Events[0].Start.DayOfWeek - 1;
+                week.Days.RemoveAt(index);
+                week.Days.Insert(index, day);
             }
 
-            display.SaveImage();
+            weeks.Add(week);
+
+            Console.WriteLine($"We have {weeks.Count} st weeks");
+            Console.WriteLine(list.Count);
+
+            foreach (var w in weeks) {
+                new Image(800, 800, 50).WriteWeek(w);
+            }
+
+            Console.WriteLine("Done");
+        }
+
+        static void exit() {
+            Environment.Exit(Environment.ExitCode);
         }
 
     }
