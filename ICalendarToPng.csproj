@@ -32,6 +32,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Discord.Net, Version=0.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\Discord.Net.0.9.5\lib\net45\Discord.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Concurrent, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.Concurrent.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Enlightenment, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -39,10 +57,17 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebSocket4Net, Version=0.14.1.0, Culture=neutral, PublicKeyToken=eb4e154b696bf72a">
+      <HintPath>packages\WebSocket4Net.0.14.1\lib\net45\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalendarEventGraphicsWraper.cs" />
+    <Compile Include="EventGraphicsWraper.cs" />
     <Compile Include="CalendarEvent.cs" />
+    <Compile Include="DiscordBot.cs" />
+    <Compile Include="files\Event.cs" />
+    <Compile Include="files\IcalcEvent.cs" />
+    <Compile Include="files\Repeater.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Formater.cs" />
     <Compile Include="ICalc.cs" />
@@ -52,7 +77,11 @@
     <Compile Include="WeekHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="files" />
     <Folder Include="res" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

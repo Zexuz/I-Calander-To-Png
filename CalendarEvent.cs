@@ -24,7 +24,7 @@ namespace ICalendarToPng {
 
     public class Repeat {
 
-        public Enum Freq = FreqEnum.Unknow;
+        public FreqEnum Freq = FreqEnum.Unknow;
         public DateTime Untill;
 
         public Repeat(string longAsNoneIndexedString) {

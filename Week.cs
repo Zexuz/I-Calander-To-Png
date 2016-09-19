@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 
+using ICalendarToPng.files;
+
 namespace ICalendarToPng {
 
     public class Week {
@@ -79,10 +81,10 @@ namespace ICalendarToPng {
 
     public class Day {
 
-        public List<CalendarEvent> CalendarEvents;
+        public List<Event> Events;
 
-        public Day(List<CalendarEvent> calendarEvents) {
-            CalendarEvents = calendarEvents;
+        public Day(List<Event> events) {
+            Events = events;
         }
 
     }

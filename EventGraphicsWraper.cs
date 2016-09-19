@@ -1,26 +1,28 @@
 ﻿using System.Drawing;
 
+using ICalendarToPng.files;
+
 namespace ICalendarToPng {
 
-    public class CalendarEventGraphicsWraper {
+    public class EventGraphicsWraper {
 
         private readonly Image _image;
-        private readonly CalendarEvent _calendarEvent;
+        private readonly Event _event;
 
         private readonly int _dayOfWeek;
 
         public Bitmap BitmapImage;
 
-        public CalendarEventGraphicsWraper(Image image, CalendarEvent calendarEvent, int dayOfWeek) {
+        public EventGraphicsWraper(Image image, Event ev, int dayOfWeek) {
             //IDE DON*T LET ME HAVE A ROW HERE...
 
             _image = image;
-            _calendarEvent = calendarEvent;
+            _event = ev;
             _dayOfWeek = dayOfWeek;
         }
 
 
-        public void DrawCalanderEvent() {
+        public void DrawEvent() {
             var rect = new Rectangle(
                 GetX(),
                 GetY(),
@@ -32,6 +34,12 @@ namespace ICalendarToPng {
                 g.DrawRectangle(new Pen(Color.Black), rect);
                 DrawStartTime();
                 DrawEndTime();
+
+                //delete this code
+                var x = (int) (GetX() + GetWidth() / 2 + 10 - (0.0375 * _image.HeightMinusMargin));
+                var y = GetY() + GetHeight() - 13;
+                DrawString(_event.Start.DayOfWeek.ToString(), x, y);
+                //-------
             }
         }
 
@@ -39,14 +47,14 @@ namespace ICalendarToPng {
             var x = (int) (GetX() + GetWidth() - (0.0375 * _image.HeightMinusMargin));
             var y = GetY() + GetHeight() - 13;
 
-            DrawString(_calendarEvent.End.ToShortTimeString(), x, y);
+            DrawString(_event.End.ToShortTimeString(), x, y);
         }
 
         private void DrawStartTime() {
             var x = GetX();
             var y = GetY();
 
-            DrawString(_calendarEvent.Start.ToShortTimeString(), x, y);
+            DrawString(_event.Start.ToShortTimeString(), x, y);
         }
 
         private void DrawString(string str, int x, int y, int font = 8) {
@@ -63,11 +71,11 @@ namespace ICalendarToPng {
         }
 
         private int GetY() {
-            return _image.GetYPosFromCalendarEvent(_calendarEvent) + _image.MarginTop;
+            return _image.GetYPosFromEvent(_event) + _image.MarginTop;
         }
 
         private int GetHeight() {
-            return _image.GetHeightBasedOfCalendarEvent(_calendarEvent);
+            return _image.GetHeightBasedOfEvent(_event);
         }
 
         private int GetWidth() {

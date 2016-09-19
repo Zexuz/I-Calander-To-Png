@@ -31,6 +31,16 @@ namespace ICalendarToPng {
             return file;
         }
 
+        public string ReadFile(string fileDir) {
+            string file;
+
+            using (var sr = new StreamReader(fileDir)) {
+                file = sr.ReadToEnd();
+            }
+
+            return file;
+        }
+
     }
 
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
+using ICalendarToPng.files;
+
 namespace ICalendarToPng {
 
     public class Image {
@@ -46,17 +48,17 @@ namespace ICalendarToPng {
 
         public void PaintDays(List<Day> days) {
             foreach (var day in days) {
-                if (day == null || day.CalendarEvents == null) {
+                if (day == null || day.Events == null) {
                     //TODO draw "nothing here" on img
                     continue;
                 }
 
 
-                foreach (var cEvent in day.CalendarEvents) {
-                    var dayOfWeekk = (int) day.CalendarEvents[0].Start.DayOfWeek;
-                    var cEventGraphics = new CalendarEventGraphicsWraper(this, cEvent, dayOfWeekk);
+                foreach (var ev in day.Events) {
+                    var dayOfWeekk = (int) day.Events[0].Start.DayOfWeek;
+                    var eventGraphics = new EventGraphicsWraper(this, ev, dayOfWeekk);
 
-                    cEventGraphics.DrawCalanderEvent();
+                    eventGraphics.DrawEvent();
                 }
             }
         }
@@ -71,19 +73,19 @@ namespace ICalendarToPng {
         }
 
 
-        public int GetHeightBasedOfCalendarEvent(CalendarEvent calendarEvent) {
+        public int GetHeightBasedOfEvent(Event ev) {
             const int minutesInOneDay = 60 * 24;
 
-            var duration = (calendarEvent.End - calendarEvent.Start).TotalMinutes;
+            var duration = (ev.End - ev.Start).TotalMinutes;
 
             return GetResponsiveValue(duration, minutesInOneDay, HeightMinusMargin);
         }
 
-        public int GetYPosFromCalendarEvent(CalendarEvent calendarEvent) {
+        public int GetYPosFromEvent(Event ev) {
             const double minInOneDay = 60 * 24;
 
-            double minutes = calendarEvent.Start.Hour * 60;
-            minutes += calendarEvent.Start.Minute;
+            double minutes = ev.Start.Hour * 60;
+            minutes += ev.Start.Minute;
 
             return GetResponsiveValue(minutes, minInOneDay, HeightMinusMargin);
         }
@@ -104,8 +106,6 @@ namespace ICalendarToPng {
         }
 
         public void SaveImage(int weekNr) {
-            Console.WriteLine(BitmapImage.Height);
-            Console.WriteLine(BitmapImage.Width);
             BitmapImage.Save($"{OutPutDir}{weekNr}.png", ImageFormat.Png);
             BitmapImage.Dispose();
         }

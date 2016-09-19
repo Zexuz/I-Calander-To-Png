@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.NetworkInformation;
+
+using ICalendarToPng.files;
 
 
 namespace ICalendarToPng {
@@ -13,16 +15,20 @@ namespace ICalendarToPng {
         public static void Main(string[] args) {
             var icalc = new ICalc(CalendarUrl);
 
-            //icalc.DownloadFile();
+            icalc.DownloadFile();
             var file = icalc.ReadFile();
 
             var formater = new Formater(file);
-            formater.MakeEvents();
 
+
+            //make events from IcalsEvents;
+            formater.MakeEventsFromIcalcEvents(new DateTime(2016, 09, 19), new DateTime(2016, 10, 1));
+
+            formater.SortList();
 
             var list = formater.GetCalendarEventsBetweenDates(new DateTime(2016, 09, 19), new DateTime(2016, 10, 1));
-            //todo convert list to weeks
 
+            Console.WriteLine(list.Count);
 
             var days = new List<Day>();
 
@@ -36,7 +42,7 @@ namespace ICalendarToPng {
                 //get the last day in our calendar
                 //get a calendar and run trhue every day
 
-                var cEvents = new List<CalendarEvent>();
+                var events = new List<Event>();
 
                 //if there are no "events" in that day, just add a empty day
                 if (date.Day != list[currentcEventIndex].Start.Day) {
@@ -51,11 +57,11 @@ namespace ICalendarToPng {
                         break;
                     }
 
-                    cEvents.Add(list[i]);
+                    events.Add(list[i]);
                 }
 
-                currentcEventIndex += cEvents.Count;
-                var day = new Day(cEvents);
+                currentcEventIndex += events.Count;
+                var day = new Day(events);
                 days.Add(day);
             }
 
@@ -73,9 +79,9 @@ namespace ICalendarToPng {
             for (var i = 0; i < days.Count; i++) {
                 var day = days[i];
 
-                if (day == null || day.CalendarEvents == null) continue;
+                if (day == null || day.Events == null) continue;
 
-                if (week == null) week = new Week(days[i].CalendarEvents[0].Start);
+                if (week == null) week = new Week(days[i].Events[0].Start);
 
                 if (i % 7 == 0 && i > 0) {
                     weeks.Add(week);
@@ -85,12 +91,12 @@ namespace ICalendarToPng {
 
                 Console.WriteLine($"index is {i}");
 
-                if (!week.WeekDayIsInsideWeek(day.CalendarEvents[0].Start)) {
+                if (!week.WeekDayIsInsideWeek(day.Events[0].Start)) {
                     weeks.Add(week);
-                    week = new Week(day.CalendarEvents[0].Start);
+                    week = new Week(day.Events[0].Start);
                 }
 
-                var index = (int) day.CalendarEvents[0].Start.DayOfWeek - 1;
+                var index = (int) day.Events[0].Start.DayOfWeek - 1;
                 week.Days.RemoveAt(index);
                 week.Days.Insert(index, day);
             }
@@ -103,6 +109,12 @@ namespace ICalendarToPng {
             foreach (var w in weeks) {
                 new Image(800, 800, 50).WriteWeek(w);
             }
+
+            Console.WriteLine("Done");
+        }
+
+        static void exit() {
+            Environment.Exit(Environment.ExitCode);
         }
 
     }
